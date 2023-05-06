@@ -9,14 +9,8 @@ import com.example.musicpie2.R
 import com.example.musicpie2.model.Song
 import com.google.android.material.imageview.ShapeableImageView
 
-class SongAdapter(private val songsList: ArrayList<Song>) :
-    RecyclerView.Adapter<SongAdapter.SongViewHolder>() {
-
-    class SongViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val cover: ShapeableImageView = itemView.findViewById(R.id.cover)
-        val songTitle: TextView = itemView.findViewById(R.id.songTitle)
-        val songArtist: TextView = itemView.findViewById(R.id.songArtist)
-    }
+class SongAdapter(private val songsList: ArrayList<Song>, private var clickListener: OnItemListClickListener) :
+    RecyclerView.Adapter<SongViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SongViewHolder {
         val itemView =
@@ -30,9 +24,24 @@ class SongAdapter(private val songsList: ArrayList<Song>) :
 
     override fun onBindViewHolder(holder: SongViewHolder, position: Int) {
         val currentSong = songsList[position]
-        holder.cover.setImageResource(currentSong.cover)
-        holder.songTitle.text = currentSong.songTitle
-        holder.songArtist.text = currentSong.songArtist
-
+        holder.initialize(currentSong, clickListener)
     }
+}
+class SongViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    private val cover: ShapeableImageView = itemView.findViewById(R.id.cover)
+    private val songTitle: TextView = itemView.findViewById(R.id.songTitle)
+    private val songArtist: TextView = itemView.findViewById(R.id.songArtist)
+
+    fun initialize (item: Song, action: OnItemListClickListener) {
+        cover.setImageResource(item.cover)
+        songTitle.text = item.songTitle
+        songArtist.text = item.songArtist
+
+        itemView.setOnClickListener {
+            action.onItemClick(item,adapterPosition)
+        }
+    }
+}
+interface OnItemListClickListener {
+    fun onItemClick(item: Song, position: Int)
 }
