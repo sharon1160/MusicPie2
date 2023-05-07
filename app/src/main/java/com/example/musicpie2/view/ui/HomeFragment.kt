@@ -39,9 +39,28 @@ class HomeFragment : Fragment(), OnItemListClickListener {
             binding.playListRecycler.adapter = songAdapter
         })
 
+        settings()
+        player()
+
         return binding.root
     }
     override fun onItemClick(item: Song, position: Int) {
         Toast.makeText(requireContext(), item.songTitle, Toast.LENGTH_LONG).show()
+    }
+
+    private fun settings() {
+        binding.toolbar.settingsButton.setOnClickListener {
+            Toast.makeText(requireContext(), "Settings", Toast.LENGTH_LONG).show()
+        }
+    }
+
+    private fun player() {
+        binding.playButton.setOnClickListener {
+            Toast.makeText(requireContext(), "Playing", Toast.LENGTH_LONG).show()
+        }
+
+        binding.randomButton.setOnClickListener {
+            Toast.makeText(requireContext(), "Shuffle", Toast.LENGTH_LONG).show()
+        }
     }
 }
