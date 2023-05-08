@@ -1,15 +1,13 @@
 package com.example.musicpie2.view.ui
 
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.Toast
-import androidx.fragment.app.viewModels
-import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -37,7 +35,7 @@ class HomeFragment : Fragment(), OnItemListClickListener {
     private val baseSongIndex = 0
     private var pos = baseSongIndex
 
-    private val songViewModel: SongViewModel by viewModels()
+    private lateinit var songViewModel: SongViewModel
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -52,14 +50,15 @@ class HomeFragment : Fragment(), OnItemListClickListener {
         playListRecycler.layoutManager = LinearLayoutManager(requireContext())
         playListRecycler.adapter = songAdapter
 
-        songViewModel.getSongsList().observe(viewLifecycleOwner, Observer { songsList ->
-            originalPlaylist = songsList
-            playlist = originalPlaylist
-            songAdapter = SongAdapter(songsList, this)
-            playListRecycler.adapter = songAdapter
-            updatePlaylist()
-        })
 
+        songViewModel = ViewModelProvider(this)[SongViewModel::class.java]
+
+        originalPlaylist = songViewModel.getSongsList()
+        playlist = originalPlaylist
+        songAdapter = SongAdapter(originalPlaylist, this)
+        playListRecycler.adapter = songAdapter
+
+        updatePlaylist()
         updatePlaylist()
         updatePlayIcon()
         updateRandomIcon()
