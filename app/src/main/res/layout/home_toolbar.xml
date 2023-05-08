@@ -19,7 +19,7 @@
                 android:id="@+id/homeToolbar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/toolbar_color"
+                android:background="@color/primary_color"
                 app:title="@string/home_toolbar_title"
                 app:titleTextColor="@color/white"
                 android:minHeight="?attr/actionBarSize"
