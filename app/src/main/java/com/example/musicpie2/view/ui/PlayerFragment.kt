@@ -1,5 +1,6 @@
 package com.example.musicpie2.view.ui
 
+import android.content.Intent
 import android.media.MediaPlayer
 import android.net.Uri
 import android.os.Bundle
@@ -14,6 +15,7 @@ import android.widget.SeekBar
 import androidx.constraintlayout.motion.widget.MotionLayout
 import com.example.musicpie2.R
 import android.os.Handler
+import android.os.Message
 import android.util.Log
 import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
@@ -44,6 +46,7 @@ class PlayerFragment : Fragment() {
     private var pos = baseSongIndex
 
     private var mediaPlayerSingleton = MediaPlayerSingleton
+    private var BROADCAST_ACTION = "com.example.musicpie2.view.ui.PLAYER_BROADCAST"
 
     private lateinit var homeViewModel: HomeViewModel
 
@@ -74,14 +77,15 @@ class PlayerFragment : Fragment() {
             if (mediaPlayerSingleton.mediaPlayer == null) {
                 mediaPlayerSingleton.init(requireContext(), playlist[pos].audio)
             }
+            sendToastBroadcast("Playing \"${playlist[pos].songTitle}\"")
             mediaPlayerSingleton.start()
-            //startAnimation(motionLayout)
             playPauseButton.setBackgroundResource(R.drawable.pause_icon)
             initSeekbar()
         } else {
             mediaPlayerSingleton.pause()
             playPauseButton.setBackgroundResource(R.drawable.play_icon)
         }
+
         loadCover(playlist[pos].cover, cover)
 
         player(playlist[pos].audio)
@@ -112,20 +116,12 @@ class PlayerFragment : Fragment() {
         pos = arguments?.getInt("pos") ?: baseSongIndex
     }
 
-    private fun startAnimation(motionLayout: MotionLayout) {
-        motionLayout.transitionToEnd()
-        motionLayout.transitionToStart()
-    }
-
     private fun navigationToSettings(view: View) {
         Navigation.findNavController(view)
             .navigate(R.id.action_playerFragment_to_settingsFragment)
     }
 
     private fun player(id: Uri) {
-
-        //val motionLayout = findViewById<MotionLayout>(R.id.constraintLayout)
-
         playPauseButton.setOnClickListener {
 
             if (mediaPlayerSingleton.isPlaying()) {
@@ -142,7 +138,7 @@ class PlayerFragment : Fragment() {
                 playPauseButton.setBackgroundResource(R.drawable.pause_icon)
                 isPlaying = true
                 initSeekbar()
-                Toast.makeText(requireContext(), "Play", Toast.LENGTH_SHORT).show()
+                sendToastBroadcast("Playing \"${playlist[pos].songTitle}\"")
             }
         }
 
@@ -171,7 +167,7 @@ class PlayerFragment : Fragment() {
             mediaPlayerSingleton.mediaPlayer =
                 MediaPlayer.create(requireContext(), playlist[pos].audio)
             mediaPlayerSingleton.mediaPlayer?.start()
-            //startAnimation(motionLayout)
+            sendToastBroadcast("Playing \"${playlist[pos].songTitle}\"")
             playPauseButton.setBackgroundResource(R.drawable.pause_icon)
             isPlaying = true
             loadCover(playlist[pos].cover,cover)
@@ -210,6 +206,13 @@ class PlayerFragment : Fragment() {
             Navigation.findNavController(view)
                 .navigate(R.id.action_playerFragment_to_homeFragment, bundle)
         }
+    }
+
+    private fun sendToastBroadcast(message: String) {
+        val intent = Intent()
+        intent.action = BROADCAST_ACTION
+        intent.putExtra("message",message)
+        requireContext().sendBroadcast(intent)
     }
 
     override fun onDestroy() {
