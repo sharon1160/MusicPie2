@@ -7,4 +7,5 @@
     <string name="settings_title">Settings</string>
     <string name="player_toolbar_title">Player</string>
     <string name="content_description_example">content description example</string>
+    <string name="settings_toolbar_title">Settings</string>
 </resources>
