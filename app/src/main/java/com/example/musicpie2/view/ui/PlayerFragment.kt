@@ -40,7 +40,7 @@ class PlayerFragment : Fragment() {
     private var destroyMediaplayer: Boolean = false
     private var playlist: ArrayList<Song> = arrayListOf()
     private val baseSongIndex = 0
-    private var pos = baseSongIndex
+    private var currentPosition = baseSongIndex
 
     private var mediaPlayerSingleton = MediaPlayerSingleton
     private var BROADCAST_ACTION = "com.example.musicpie2.view.ui.PLAYER_BROADCAST"
@@ -72,9 +72,9 @@ class PlayerFragment : Fragment() {
 
         if (isPlaying) {
             if (mediaPlayerSingleton.mediaPlayer == null) {
-                mediaPlayerSingleton.init(requireContext(), playlist[pos].audio)
+                mediaPlayerSingleton.init(requireContext(), playlist[currentPosition].audio)
             }
-            sendToastBroadcast("Playing \"${playlist[pos].songTitle}\"")
+            sendToastBroadcast("Playing \"${playlist[currentPosition].songTitle}\"")
             mediaPlayerSingleton.start()
             playPauseButton.setBackgroundResource(R.drawable.pause_icon)
             initSeekbar()
@@ -83,9 +83,9 @@ class PlayerFragment : Fragment() {
             playPauseButton.setBackgroundResource(R.drawable.play_icon)
         }
 
-        loadCover(playlist[pos].cover, cover)
+        loadCover(playlist[currentPosition].cover, cover)
 
-        player(playlist[pos].audio)
+        player(playlist[currentPosition].audio)
 
         return binding.root
     }
@@ -110,7 +110,7 @@ class PlayerFragment : Fragment() {
         isPlaying = arguments?.getBoolean("isPlaying") ?: true
         isRandom = arguments?.getBoolean("isRandom") ?: false
         destroyMediaplayer = arguments?.getBoolean("destroyMediaplayer") ?: false
-        pos = arguments?.getInt("pos") ?: baseSongIndex
+        currentPosition = arguments?.getInt("currentPosition") ?: baseSongIndex
     }
 
     private fun navigationToSettings(view: View) {
@@ -134,7 +134,7 @@ class PlayerFragment : Fragment() {
                 playPauseButton.setBackgroundResource(R.drawable.pause_icon)
                 isPlaying = true
                 initSeekbar()
-                sendToastBroadcast("Playing \"${playlist[pos].songTitle}\"")
+                sendToastBroadcast("Playing \"${playlist[currentPosition].songTitle}\"")
             }
         }
 
@@ -154,36 +154,36 @@ class PlayerFragment : Fragment() {
         nextButton.setOnClickListener {
             mediaPlayerSingleton.mediaPlayer?.pause()
 
-            if (pos < playlist.size - 1) {
-                pos++
+            if (currentPosition < playlist.size - 1) {
+                currentPosition++
             } else {
-                pos = 0
+                currentPosition = 0
             }
 
             mediaPlayerSingleton.mediaPlayer =
-                MediaPlayer.create(requireContext(), playlist[pos].audio)
+                MediaPlayer.create(requireContext(), playlist[currentPosition].audio)
             mediaPlayerSingleton.mediaPlayer?.start()
-            sendToastBroadcast("Playing \"${playlist[pos].songTitle}\"")
+            sendToastBroadcast("Playing \"${playlist[currentPosition].songTitle}\"")
             playPauseButton.setBackgroundResource(R.drawable.pause_icon)
             isPlaying = true
-            loadCover(playlist[pos].cover,cover)
+            loadCover(playlist[currentPosition].cover, cover)
         }
 
         previousButton.setOnClickListener {
             mediaPlayerSingleton.mediaPlayer?.pause()
 
-            if (pos > 0) {
-                pos--
+            if (currentPosition > 0) {
+                currentPosition--
             } else {
-                pos = playlist.size - 1
+                currentPosition = playlist.size - 1
             }
 
             mediaPlayerSingleton.mediaPlayer =
-                MediaPlayer.create(requireContext(), playlist[pos].audio)
+                MediaPlayer.create(requireContext(), playlist[currentPosition].audio)
             mediaPlayerSingleton.mediaPlayer?.start()
             playPauseButton.setBackgroundResource(R.drawable.pause_icon)
             isPlaying = true
-            loadCover(playlist[pos].cover,cover)
+            loadCover(playlist[currentPosition].cover, cover)
         }
 
         settingsButton.setOnClickListener { view: View ->
@@ -197,7 +197,7 @@ class PlayerFragment : Fragment() {
             bundle.putBoolean("isPlaying", isPlaying)
             bundle.putBoolean("isRandom", isRandom)
             bundle.putBoolean("destroyMediaplayer", destroyMediaplayer)
-            bundle.putInt("pos", pos)
+            bundle.putInt("currentPosition", currentPosition)
             Navigation.findNavController(view)
                 .navigate(R.id.action_playerFragment_to_homeFragment, bundle)
         }
@@ -206,7 +206,7 @@ class PlayerFragment : Fragment() {
     private fun sendToastBroadcast(message: String) {
         val intent = Intent()
         intent.action = BROADCAST_ACTION
-        intent.putExtra("message",message)
+        intent.putExtra("message", message)
         requireContext().sendBroadcast(intent)
     }
 
