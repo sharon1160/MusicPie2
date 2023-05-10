@@ -33,7 +33,7 @@ class HomeFragment : Fragment(), OnItemListClickListener {
     private var isPlaying: Boolean = false
     private var destroyMediaplayer: Boolean = false
     private val baseSongIndex = 0
-    private var pos = baseSongIndex
+    private var currentPosition = baseSongIndex
     private var mediaPlayerSingleton = MediaPlayerSingleton
 
     private lateinit var homeViewModel: HomeViewModel
@@ -45,26 +45,34 @@ class HomeFragment : Fragment(), OnItemListClickListener {
 
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
 
-        initialize()
+        initializeVariables()
 
         homeViewModel = ViewModelProvider(this)[HomeViewModel::class.java]
 
+        initializePlayListRecycler()
+        updatePlayIcon()
+        updateRandomIcon()
+        player()
+        navigationToSettings()
+
+        return binding.root
+    }
+
+    private fun initializeVariables() {
+        playListRecycler = binding.playListRecycler
+        playPauseButton = binding.playPauseButton
+        randomButton = binding.randomButton
+        settingsButton = binding.toolbar.settingsButton
+        currentPosition = arguments?.getInt("currentPosition") ?: baseSongIndex
+        destroyMediaplayer = arguments?.getBoolean("destroyMediaplayer") ?: false
+    }
+
+    private fun initializePlayListRecycler() {
         playListRecycler = binding.playListRecycler
         playlist = homeViewModel.getSongsList()
         val songAdapter = SongAdapter(playlist, this)
         playListRecycler.layoutManager = LinearLayoutManager(requireContext())
         playListRecycler.adapter = songAdapter
-
-        updatePlayIcon()
-        updateRandomIcon()
-
-        player()
-        settings()
-        return binding.root
-    }
-
-    override fun onItemClick(item: Song, position: Int) {
-        Toast.makeText(requireContext(), item.songTitle, Toast.LENGTH_LONG).show()
     }
 
     private fun updatePlayIcon() {
@@ -85,31 +93,12 @@ class HomeFragment : Fragment(), OnItemListClickListener {
         }
     }
 
-    private fun initialize() {
-        playListRecycler = binding.playListRecycler
-        playPauseButton = binding.playPauseButton
-        randomButton = binding.randomButton
-        settingsButton = binding.toolbar.settingsButton
-        pos = arguments?.getInt("pos") ?: baseSongIndex
-        destroyMediaplayer = arguments?.getBoolean("destroyMediaplayer") ?: false
-    }
-
-    private fun navigationToPlayer(view: View) {
-        val bundle = Bundle()
-        bundle.putBoolean("isPlaying", isPlaying)
-        bundle.putBoolean("isRandom", isRandom)
-        bundle.putBoolean("destroyMediaplayer", destroyMediaplayer)
-        bundle.putInt("pos", pos)
-        Navigation.findNavController(view)
-            .navigate(R.id.action_homeFragment_to_playerFragment, bundle)
-    }
-
-    private fun navigationToSettings(view: View) {
-        Navigation.findNavController(view)
-            .navigate(R.id.action_homeFragment_to_settingsFragment)
-    }
-
     private fun player() {
+        playPauseOnClick()
+        randomOnClick()
+    }
+
+    private fun playPauseOnClick() {
         playPauseButton.setOnClickListener { view: View ->
             isPlaying = if (isPlaying) {
                 Toast.makeText(requireContext(), "Pause", Toast.LENGTH_SHORT).show()
@@ -123,15 +112,17 @@ class HomeFragment : Fragment(), OnItemListClickListener {
             isRandom = false
             navigationToPlayer(view)
         }
+    }
 
+    private fun randomOnClick() {
         randomButton.setOnClickListener {
             isRandom = if (isRandom) {
-                pos = 0
+                currentPosition = 0
                 randomButton.setBackgroundResource(R.drawable.random_off_icon)
                 Toast.makeText(requireContext(), "Shuffle not enabled", Toast.LENGTH_SHORT).show()
                 false
             } else {
-                pos = (0 until playlist.size).random()
+                currentPosition = (0 until playlist.size).random()
                 randomButton.setBackgroundResource(R.drawable.random_on_icon)
                 Toast.makeText(requireContext(), "Shuffle enabled", Toast.LENGTH_SHORT).show()
                 true
@@ -141,11 +132,26 @@ class HomeFragment : Fragment(), OnItemListClickListener {
         }
     }
 
-    private fun settings() {
+    private fun navigationToPlayer(view: View) {
+        val bundle = Bundle()
+        bundle.putBoolean("isPlaying", isPlaying)
+        bundle.putBoolean("isRandom", isRandom)
+        bundle.putBoolean("destroyMediaplayer", destroyMediaplayer)
+        bundle.putInt("currentPosition", currentPosition)
+        Navigation.findNavController(view)
+            .navigate(R.id.action_homeFragment_to_playerFragment, bundle)
+    }
+
+    private fun navigationToSettings() {
         settingsButton.setOnClickListener { view: View ->
             mediaPlayerSingleton.pause()
             playPauseButton.setBackgroundResource(R.drawable.play_icon)
-            navigationToSettings(view)
+            Navigation.findNavController(view)
+                .navigate(R.id.action_homeFragment_to_settingsFragment)
         }
+    }
+
+    override fun onItemClick(item: Song, position: Int) {
+        Toast.makeText(requireContext(), item.songTitle, Toast.LENGTH_LONG).show()
     }
 }
