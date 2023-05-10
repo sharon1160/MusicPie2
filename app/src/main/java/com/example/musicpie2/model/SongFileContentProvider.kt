@@ -12,24 +12,75 @@ class SongFileContentProvider : ContentProvider() {
     private var playlist = arrayListOf(
         Song(
             Uri.parse("$URI_RSC${R.drawable.cover1}"),
-            "Title 1",
-            "Artist 1",
+            "Chlorine",
+            "Twenty One Pilots",
             Uri.parse("$URI_RSC${R.raw.song1}"),
             true
         ),
         Song(
             Uri.parse("$URI_RSC${R.drawable.cover2}"),
-            "Title 2",
-            "Artist 2",
+            "Ride",
+            "Twenty One Pilots",
             Uri.parse("$URI_RSC${R.raw.song2}"),
             true
         ),
         Song(
             Uri.parse("$URI_RSC${R.drawable.cover3}"),
-            "Title 3",
-            "Artist 3",
+            "La La La",
+            "Naughty Boy, Sam Smith",
             Uri.parse("$URI_RSC${R.raw.song3}"),
             true
+        ),
+
+
+        Song(
+            Uri.parse("$URI_RSC${R.drawable.cover4}"),
+            "Atlantis",
+            "Seafret",
+            Uri.parse("$URI_RSC${R.raw.song4}"),
+            false
+        ),
+        Song(
+            Uri.parse("$URI_RSC${R.drawable.cover5}"),
+            "Everglow",
+            "Coldplay",
+            Uri.parse("$URI_RSC${R.raw.song5}"),
+            false
+        ),
+        Song(
+            Uri.parse("$URI_RSC${R.drawable.cover6}"),
+            "Secrets",
+            "OneRepublic",
+            Uri.parse("$URI_RSC${R.raw.song6}"),
+            false
+        ),
+        Song(
+            Uri.parse("$URI_RSC${R.drawable.cover7}"),
+            "On Melancholy Hill",
+            "Gorillaz",
+            Uri.parse("$URI_RSC${R.raw.song7}"),
+            false
+        ),
+        Song(
+            Uri.parse("$URI_RSC${R.drawable.cover8}"),
+            "Moral of the Story",
+            "Ashe",
+            Uri.parse("$URI_RSC${R.raw.song8}"),
+            false
+        ),
+        Song(
+            Uri.parse("$URI_RSC${R.drawable.cover9}"),
+            "Like a Stone",
+            "Audioslave",
+            Uri.parse("$URI_RSC${R.raw.song9}"),
+            false
+        ),
+        Song(
+            Uri.parse("$URI_RSC${R.drawable.cover10}"),
+            "By the Way",
+            "Red Hot Chili Peppers",
+            Uri.parse("$URI_RSC${R.raw.song10}"),
+            false
         )
     )
 
