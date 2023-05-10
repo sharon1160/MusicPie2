@@ -56,13 +56,37 @@ class PlayerFragment : Fragment() {
         homeViewModel = ViewModelProvider(this)[HomeViewModel::class.java]
         playlist = homeViewModel.getSongsList()
 
-        initialize()
+        initializeVariables()
+        checkDestroyMediaPlayer()
+        checkMediaPlayer()
+        player(playlist[currentPosition].audio)
 
+        return binding.root
+    }
+
+    private fun initializeVariables() {
+        playPauseButton = binding.playPauseButton
+        nextButton = binding.nextButton
+        previousButton = binding.previousButton
+        settingsButton = binding.settingsButton
+        backButton = binding.backButton
+        seekBar = binding.seekBar
+        cover = binding.cover
+
+        isPlaying = arguments?.getBoolean("isPlaying") ?: true
+        isRandom = arguments?.getBoolean("isRandom") ?: false
+        destroyMediaplayer = arguments?.getBoolean("destroyMediaplayer") ?: false
+        currentPosition = arguments?.getInt("currentPosition") ?: baseSongIndex
+    }
+
+    private fun checkDestroyMediaPlayer() {
         if (destroyMediaplayer) {
             onDestroy()
             destroyMediaplayer = false
         }
+    }
 
+    private fun checkMediaPlayer() {
         mediaPlayerSingleton.mediaPlayer?.let {
             if (it.isPlaying) {
                 playPauseButton.setBackgroundResource(R.drawable.pause_icon)
@@ -82,12 +106,7 @@ class PlayerFragment : Fragment() {
             mediaPlayerSingleton.pause()
             playPauseButton.setBackgroundResource(R.drawable.play_icon)
         }
-
         loadCover(playlist[currentPosition].cover, cover)
-
-        player(playlist[currentPosition].audio)
-
-        return binding.root
     }
 
     private fun loadCover(uri: Uri, view: ImageView) {
@@ -98,27 +117,16 @@ class PlayerFragment : Fragment() {
         }
     }
 
-    private fun initialize() {
-        playPauseButton = binding.playPauseButton
-        nextButton = binding.nextButton
-        previousButton = binding.previousButton
-        settingsButton = binding.settingsButton
-        backButton = binding.backButton
-        seekBar = binding.seekBar
-        cover = binding.cover
-
-        isPlaying = arguments?.getBoolean("isPlaying") ?: true
-        isRandom = arguments?.getBoolean("isRandom") ?: false
-        destroyMediaplayer = arguments?.getBoolean("destroyMediaplayer") ?: false
-        currentPosition = arguments?.getInt("currentPosition") ?: baseSongIndex
-    }
-
-    private fun navigationToSettings(view: View) {
-        Navigation.findNavController(view)
-            .navigate(R.id.action_playerFragment_to_settingsFragment)
-    }
-
     private fun player(id: Uri) {
+        playPauseOnClick(id)
+        seekBarChangeListener()
+        nextOnClick()
+        previousOnClick()
+        settingsOnClick()
+        backOnClick()
+    }
+
+    private fun playPauseOnClick(id: Uri) {
         playPauseButton.setOnClickListener {
 
             if (mediaPlayerSingleton.isPlaying()) {
@@ -137,7 +145,9 @@ class PlayerFragment : Fragment() {
                 sendToastBroadcast("Playing \"${playlist[currentPosition].songTitle}\"")
             }
         }
+    }
 
+    private fun seekBarChangeListener() {
         seekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(p0: SeekBar?, progress: Int, user: Boolean) {
                 if (user) mediaPlayerSingleton.mediaPlayer?.seekTo(progress)
@@ -150,7 +160,9 @@ class PlayerFragment : Fragment() {
             }
 
         })
+    }
 
+    private fun nextOnClick() {
         nextButton.setOnClickListener {
             mediaPlayerSingleton.mediaPlayer?.pause()
 
@@ -168,7 +180,9 @@ class PlayerFragment : Fragment() {
             isPlaying = true
             loadCover(playlist[currentPosition].cover, cover)
         }
+    }
 
+    private fun previousOnClick() {
         previousButton.setOnClickListener {
             mediaPlayerSingleton.mediaPlayer?.pause()
 
@@ -177,7 +191,6 @@ class PlayerFragment : Fragment() {
             } else {
                 currentPosition = playlist.size - 1
             }
-
             mediaPlayerSingleton.mediaPlayer =
                 MediaPlayer.create(requireContext(), playlist[currentPosition].audio)
             mediaPlayerSingleton.mediaPlayer?.start()
@@ -185,13 +198,17 @@ class PlayerFragment : Fragment() {
             isPlaying = true
             loadCover(playlist[currentPosition].cover, cover)
         }
+    }
 
+    private fun settingsOnClick() {
         settingsButton.setOnClickListener { view: View ->
             mediaPlayerSingleton.pause()
             playPauseButton.setBackgroundResource(R.drawable.play_icon)
             navigationToSettings(view)
         }
+    }
 
+    private fun backOnClick(){
         backButton.setOnClickListener { view: View ->
             val bundle = Bundle()
             bundle.putBoolean("isPlaying", isPlaying)
@@ -201,6 +218,11 @@ class PlayerFragment : Fragment() {
             Navigation.findNavController(view)
                 .navigate(R.id.action_playerFragment_to_homeFragment, bundle)
         }
+    }
+
+    private fun navigationToSettings(view: View) {
+        Navigation.findNavController(view)
+            .navigate(R.id.action_playerFragment_to_settingsFragment)
     }
 
     private fun sendToastBroadcast(message: String) {
