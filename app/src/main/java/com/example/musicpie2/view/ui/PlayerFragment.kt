@@ -12,11 +12,8 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.SeekBar
-import androidx.constraintlayout.motion.widget.MotionLayout
 import com.example.musicpie2.R
 import android.os.Handler
-import android.os.Message
-import android.util.Log
 import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.Navigation
@@ -134,7 +131,6 @@ class PlayerFragment : Fragment() {
                     mediaPlayerSingleton.init(requireContext(), id)
                 }
                 mediaPlayerSingleton.start()
-                //startAnimation(motionLayout)
                 playPauseButton.setBackgroundResource(R.drawable.pause_icon)
                 isPlaying = true
                 initSeekbar()
@@ -185,7 +181,6 @@ class PlayerFragment : Fragment() {
             mediaPlayerSingleton.mediaPlayer =
                 MediaPlayer.create(requireContext(), playlist[pos].audio)
             mediaPlayerSingleton.mediaPlayer?.start()
-            //startAnimation(motionLayout)
             playPauseButton.setBackgroundResource(R.drawable.pause_icon)
             isPlaying = true
             loadCover(playlist[pos].cover,cover)
