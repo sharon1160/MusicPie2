@@ -14,6 +14,7 @@ import android.widget.ImageView
 import android.widget.SeekBar
 import com.example.musicpie2.R
 import android.os.Handler
+import android.widget.TextView
 import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.Navigation
@@ -35,6 +36,8 @@ class PlayerFragment : Fragment() {
     private lateinit var backButton: Button
     private lateinit var seekBar: SeekBar
     private lateinit var cover: ImageView
+    private lateinit var songTitle: TextView
+    private lateinit var songArtist: TextView
     private var isPlaying: Boolean = true
     private var isRandom: Boolean = false
     private var destroyMediaplayer: Boolean = false
@@ -72,6 +75,9 @@ class PlayerFragment : Fragment() {
         backButton = binding.backButton
         seekBar = binding.seekBar
         cover = binding.cover
+        songTitle = binding.title
+        songArtist = binding.artist
+
 
         isPlaying = arguments?.getBoolean("isPlaying") ?: true
         isRandom = arguments?.getBoolean("isRandom") ?: false
@@ -107,6 +113,8 @@ class PlayerFragment : Fragment() {
             playPauseButton.setBackgroundResource(R.drawable.play_icon)
         }
         loadCover(playlist[currentPosition].cover, cover)
+        songTitle.text = playlist[currentPosition].songTitle
+        songArtist.text = playlist[currentPosition].songArtist
     }
 
     private fun loadCover(uri: Uri, view: ImageView) {
@@ -179,6 +187,8 @@ class PlayerFragment : Fragment() {
             playPauseButton.setBackgroundResource(R.drawable.pause_icon)
             isPlaying = true
             loadCover(playlist[currentPosition].cover, cover)
+            songTitle.text = playlist[currentPosition].songTitle
+            songArtist.text = playlist[currentPosition].songArtist
         }
     }
 
@@ -197,6 +207,8 @@ class PlayerFragment : Fragment() {
             playPauseButton.setBackgroundResource(R.drawable.pause_icon)
             isPlaying = true
             loadCover(playlist[currentPosition].cover, cover)
+            songTitle.text = playlist[currentPosition].songTitle
+            songArtist.text = playlist[currentPosition].songArtist
         }
     }
 
