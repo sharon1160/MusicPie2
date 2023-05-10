@@ -1,7 +1,6 @@
 package com.example.musicpie2.view.ui
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -50,8 +49,7 @@ class SettingsFragment : Fragment(), DeleteSongClickListener, AddSongClickListen
     override fun onDeleteSongClick(item: Song, position: Int) {
         onDestroy()
         settingsViewModel.removeSong(item, position)
-        songAdapter.notifyItemRemoved(position)
-        songAdapter.notifyItemInserted(settingsViewModel.getAllSongsListSize() - 1)
+        notifyAdapter(position, settingsViewModel.getAllSongsListSize() - 1)
         Toast.makeText(requireContext(), "Deleted song \"${item.songTitle}\" ", Toast.LENGTH_SHORT).show()
     }
 
@@ -59,9 +57,13 @@ class SettingsFragment : Fragment(), DeleteSongClickListener, AddSongClickListen
         onDestroy()
         val lastPositionTrue = settingsViewModel.getLastTruePosition()
         settingsViewModel.addSong(item, position, lastPositionTrue)
-        songAdapter.notifyItemRemoved(position)
-        songAdapter.notifyItemInserted(lastPositionTrue + 1)
+        notifyAdapter(position, lastPositionTrue + 1)
         Toast.makeText(requireContext(), "Added song \"${item.songTitle}\" ", Toast.LENGTH_SHORT).show()
+    }
+
+    private fun notifyAdapter(deletedPosition: Int, addedPosition: Int) {
+        songAdapter.notifyItemRemoved(deletedPosition)
+        songAdapter.notifyItemInserted(addedPosition)
     }
 
     override fun onDestroy() {
