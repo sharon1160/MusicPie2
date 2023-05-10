@@ -1,17 +1,23 @@
 package com.example.musicpie2.model
 
+import android.util.Log
+
 object PlaylistSingleton {
-    val playlist = arrayListOf<Song>()
+    var playlist = arrayListOf<Song>()
 
     fun addSong(song: Song) {
         playlist.add(song)
     }
 
-    fun removeSong(song: Song) {
-        playlist.remove(song)
+    fun removeSong(position: Int) {
+        playlist.removeAt(position)
     }
 
     fun getSize(): Int {
         return playlist.size
+    }
+
+    fun clear() {
+        playlist = arrayListOf()
     }
 }
