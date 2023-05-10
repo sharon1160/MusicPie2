@@ -1,6 +1,7 @@
 package com.example.musicpie2.view.ui
 
 import android.media.MediaPlayer
+import android.net.Uri
 import android.os.Bundle
 import android.os.Looper
 import androidx.fragment.app.Fragment
@@ -15,11 +16,13 @@ import com.example.musicpie2.R
 import android.os.Handler
 import android.util.Log
 import android.widget.Toast
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.Navigation
+import com.bumptech.glide.Glide
 import com.example.musicpie2.databinding.FragmentPlayerBinding
 import com.example.musicpie2.model.MediaPlayerSingleton
 import com.example.musicpie2.model.Song
-import kotlin.random.Random
+import com.example.musicpie2.viewmodel.HomeViewModel
 
 class PlayerFragment : Fragment() {
 
@@ -42,11 +45,16 @@ class PlayerFragment : Fragment() {
 
     private var mediaPlayerSingleton = MediaPlayerSingleton
 
+    private lateinit var homeViewModel: HomeViewModel
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         _binding = FragmentPlayerBinding.inflate(inflater, container, false)
+
+        homeViewModel = ViewModelProvider(this)[HomeViewModel::class.java]
+        playlist = homeViewModel.getSongsList()
 
         initialize()
 
@@ -54,7 +62,6 @@ class PlayerFragment : Fragment() {
             onDestroy()
             destroyMediaplayer = false
         }
-
 
         mediaPlayerSingleton.mediaPlayer?.let {
             if (it.isPlaying) {
@@ -71,16 +78,23 @@ class PlayerFragment : Fragment() {
             //startAnimation(motionLayout)
             playPauseButton.setBackgroundResource(R.drawable.pause_icon)
             initSeekbar()
-        }
-        else {
+        } else {
             mediaPlayerSingleton.pause()
             playPauseButton.setBackgroundResource(R.drawable.play_icon)
         }
-        cover.setImageResource(playlist[pos].cover)
+        loadCover(playlist[pos].cover, cover)
 
         player(playlist[pos].audio)
 
         return binding.root
+    }
+
+    private fun loadCover(uri: Uri, view: ImageView) {
+        context?.let {
+            Glide.with(it)
+                .load(uri)
+                .into(view)
+        }
     }
 
     private fun initialize() {
@@ -96,7 +110,6 @@ class PlayerFragment : Fragment() {
         isRandom = arguments?.getBoolean("isRandom") ?: false
         destroyMediaplayer = arguments?.getBoolean("destroyMediaplayer") ?: false
         pos = arguments?.getInt("pos") ?: baseSongIndex
-        playlist = arguments?.getParcelableArrayList<Song>("playlist") ?: arrayListOf()
     }
 
     private fun startAnimation(motionLayout: MotionLayout) {
@@ -104,7 +117,12 @@ class PlayerFragment : Fragment() {
         motionLayout.transitionToStart()
     }
 
-    private fun player(id: Int) {
+    private fun navigationToSettings(view: View) {
+        Navigation.findNavController(view)
+            .navigate(R.id.action_playerFragment_to_settingsFragment)
+    }
+
+    private fun player(id: Uri) {
 
         //val motionLayout = findViewById<MotionLayout>(R.id.constraintLayout)
 
@@ -114,6 +132,7 @@ class PlayerFragment : Fragment() {
                 mediaPlayerSingleton.pause()
                 playPauseButton.setBackgroundResource(R.drawable.play_icon)
                 isPlaying = false
+                Toast.makeText(requireContext(), "Pause", Toast.LENGTH_SHORT).show()
             } else {
                 if (mediaPlayerSingleton.mediaPlayer == null) {
                     mediaPlayerSingleton.init(requireContext(), id)
@@ -123,6 +142,7 @@ class PlayerFragment : Fragment() {
                 playPauseButton.setBackgroundResource(R.drawable.pause_icon)
                 isPlaying = true
                 initSeekbar()
+                Toast.makeText(requireContext(), "Play", Toast.LENGTH_SHORT).show()
             }
         }
 
@@ -148,12 +168,13 @@ class PlayerFragment : Fragment() {
                 pos = 0
             }
 
-            mediaPlayerSingleton.mediaPlayer = MediaPlayer.create(requireContext(), playlist[pos].audio)
+            mediaPlayerSingleton.mediaPlayer =
+                MediaPlayer.create(requireContext(), playlist[pos].audio)
             mediaPlayerSingleton.mediaPlayer?.start()
             //startAnimation(motionLayout)
             playPauseButton.setBackgroundResource(R.drawable.pause_icon)
             isPlaying = true
-            cover.setImageResource(playlist[pos].cover)
+            loadCover(playlist[pos].cover,cover)
         }
 
         previousButton.setOnClickListener {
@@ -165,16 +186,19 @@ class PlayerFragment : Fragment() {
                 pos = playlist.size - 1
             }
 
-            mediaPlayerSingleton.mediaPlayer = MediaPlayer.create(requireContext(), playlist[pos].audio)
+            mediaPlayerSingleton.mediaPlayer =
+                MediaPlayer.create(requireContext(), playlist[pos].audio)
             mediaPlayerSingleton.mediaPlayer?.start()
             //startAnimation(motionLayout)
             playPauseButton.setBackgroundResource(R.drawable.pause_icon)
             isPlaying = true
-            cover.setImageResource(playlist[pos].cover)
+            loadCover(playlist[pos].cover,cover)
         }
 
-        settingsButton.setOnClickListener {
-            Toast.makeText(requireContext(), "Settings", Toast.LENGTH_LONG).show()
+        settingsButton.setOnClickListener { view: View ->
+            mediaPlayerSingleton.pause()
+            playPauseButton.setBackgroundResource(R.drawable.play_icon)
+            navigationToSettings(view)
         }
 
         backButton.setOnClickListener { view: View ->
@@ -183,12 +207,10 @@ class PlayerFragment : Fragment() {
             bundle.putBoolean("isRandom", isRandom)
             bundle.putBoolean("destroyMediaplayer", destroyMediaplayer)
             bundle.putInt("pos", pos)
-            bundle.putParcelableArrayList("playlist",playlist)
-            Navigation.findNavController(view).navigate(R.id.action_playerFragment_to_homeFragment, bundle)
+            Navigation.findNavController(view)
+                .navigate(R.id.action_playerFragment_to_homeFragment, bundle)
         }
-
     }
-
 
     override fun onDestroy() {
         super.onDestroy()

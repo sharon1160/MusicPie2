@@ -1,10 +1,13 @@
 package com.example.musicpie2.view.adapter
 
+import android.net.Uri
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.example.musicpie2.R
 import com.example.musicpie2.model.Song
 import com.google.android.material.imageview.ShapeableImageView
@@ -33,12 +36,20 @@ class SongViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
     private val songArtist: TextView = itemView.findViewById(R.id.songArtist)
 
     fun initialize (item: Song, action: OnItemListClickListener) {
-        cover.setImageResource(item.cover)
+        loadCover(item.cover, cover)
         songTitle.text = item.songTitle
         songArtist.text = item.songArtist
 
         itemView.setOnClickListener {
             action.onItemClick(item,adapterPosition)
+        }
+    }
+
+    private fun loadCover(uri: Uri, view: ImageView) {
+        itemView?.let {
+            Glide.with(itemView)
+                .load(uri)
+                .into(view)
         }
     }
 }

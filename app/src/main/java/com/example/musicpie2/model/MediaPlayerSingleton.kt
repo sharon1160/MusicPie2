@@ -2,12 +2,13 @@ package com.example.musicpie2.model
 
 import android.content.Context
 import android.media.MediaPlayer
+import android.net.Uri
 
 object MediaPlayerSingleton {
     var mediaPlayer: MediaPlayer? = null
 
-    fun init(context: Context, id: Int) {
-        mediaPlayer = MediaPlayer.create(context, id)
+    fun init(context: Context, uri: Uri) {
+        mediaPlayer = MediaPlayer.create(context, uri)
     }
 
     fun release() {
