@@ -116,7 +116,6 @@ class HomeFragment : Fragment(), OnItemListClickListener {
                 playPauseButton.setBackgroundResource(R.drawable.play_icon)
                 false
             } else {
-                Toast.makeText(requireContext(), "Play", Toast.LENGTH_SHORT).show()
                 playPauseButton.setBackgroundResource(R.drawable.pause_icon)
                 true
             }
