@@ -8,7 +8,7 @@ import com.example.musicpie2.model.PlaylistSingleton.addSong
 import com.example.musicpie2.model.Song
 import com.example.musicpie2.model.SongFileContentProvider
 
-class SettingsViewModel: ViewModel() {
+class SettingsViewModel : ViewModel() {
     private var playlistSingleton = PlaylistSingleton
     private var allPlaylist = arrayListOf<Song>()
 
@@ -29,11 +29,17 @@ class SettingsViewModel: ViewModel() {
 
     private fun updateAllPlaylist() {
         playlistSingleton.playlist.forEach {
-            val position = allPlaylist.indexOf(it)
+            val position =
+                allPlaylist.indexOfFirst { song ->
+                    song.songTitle == it.songTitle && song.songArtist == it.songArtist
+                }
             allPlaylist.removeAt(position)
         }
         allPlaylist.forEach {
-            val position = allPlaylist.indexOf(it)
+            val position =
+                allPlaylist.indexOfFirst { song ->
+                    song.songTitle == it.songTitle && song.songArtist == it.songArtist
+                }
             allPlaylist[position].inPlaylist = false
         }
         val result = ArrayList<Song>()
@@ -70,7 +76,7 @@ class SettingsViewModel: ViewModel() {
 
     fun getLastTruePosition(): Int {
         var lastSongIndex = allPlaylist.asReversed().indexOfFirst { it.inPlaylist == true }
-        lastSongIndex  = allPlaylist.size - lastSongIndex - 1
+        lastSongIndex = allPlaylist.size - lastSongIndex - 1
         return lastSongIndex
     }
 
