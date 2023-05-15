@@ -7,6 +7,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.Toast
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.ui.platform.ComposeView
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -17,9 +19,10 @@ import com.example.musicpie2.model.MediaPlayerSingleton
 import com.example.musicpie2.model.Song
 import com.example.musicpie2.view.adapter.OnItemListClickListener
 import com.example.musicpie2.view.adapter.SongAdapter
+import com.example.musicpie2.view.ui.theme.AppTheme
 import com.example.musicpie2.viewmodel.HomeViewModel
 
-class HomeFragment : Fragment(), OnItemListClickListener {
+class HomeFragment : Fragment() /*, OnItemListClickListener */{
 
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
@@ -43,8 +46,14 @@ class HomeFragment : Fragment(), OnItemListClickListener {
         savedInstanceState: Bundle?
     ): View? {
 
-        _binding = FragmentHomeBinding.inflate(inflater, container, false)
-
+        _binding = FragmentHomeBinding.inflate(inflater, container, false).apply {
+            composeView.setContent {
+                AppTheme {
+                    HomeScreen()
+                }
+            }
+        }
+        /*
         initializeVariables()
 
         homeViewModel = ViewModelProvider(this)[HomeViewModel::class.java]
@@ -53,11 +62,11 @@ class HomeFragment : Fragment(), OnItemListClickListener {
         updatePlayIcon()
         updateRandomIcon()
         player()
-        navigationToSettings()
+        navigationToSettings()*/
 
         return binding.root
     }
-
+    /*
     private fun initializeVariables() {
         playListRecycler = binding.playListRecycler
         playPauseButton = binding.playPauseButton
@@ -154,4 +163,6 @@ class HomeFragment : Fragment(), OnItemListClickListener {
     override fun onItemClick(item: Song, position: Int) {
         Toast.makeText(requireContext(), item.songTitle, Toast.LENGTH_LONG).show()
     }
+
+     */
 }
