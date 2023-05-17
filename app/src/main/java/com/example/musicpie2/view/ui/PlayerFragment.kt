@@ -1,8 +1,5 @@
 package com.example.musicpie2.view.ui
 
-import android.content.Intent
-import android.media.MediaPlayer
-import android.net.Uri
 import android.os.Bundle
 import android.os.Looper
 import androidx.fragment.app.Fragment
@@ -12,17 +9,18 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.SeekBar
-import com.example.musicpie2.R
 import android.os.Handler
+import android.util.Log
 import android.widget.TextView
-import android.widget.Toast
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.Navigation
-import com.bumptech.glide.Glide
 import com.example.musicpie2.databinding.FragmentPlayerBinding
 import com.example.musicpie2.model.MediaPlayerSingleton
 import com.example.musicpie2.model.Song
-import com.example.musicpie2.viewmodel.HomeViewModel
+import com.example.musicpie2.view.ui.theme.AppTheme
+import com.example.musicpie2.viewmodel.PlayerViewModel
 
 class PlayerFragment : Fragment() {
 
@@ -48,25 +46,56 @@ class PlayerFragment : Fragment() {
     private var mediaPlayerSingleton = MediaPlayerSingleton
     private var BROADCAST_ACTION = "com.example.musicpie2.view.ui.PLAYER_BROADCAST"
 
-    private lateinit var homeViewModel: HomeViewModel
+    private lateinit var playerViewModel: PlayerViewModel
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        _binding = FragmentPlayerBinding.inflate(inflater, container, false)
 
+        playerViewModel = ViewModelProvider(this)[PlayerViewModel::class.java]
+        arguments?.let { playerViewModel.setArguments(it) }
+        playerViewModel.initializeVariables(this)
+        playerViewModel.checkDestroyMediaPlayer()
+        playerViewModel.checkMediaPlayer(requireContext())
+
+        _binding = FragmentPlayerBinding.inflate(inflater, container, false).apply {
+            composeView.setContent {
+                _binding?.root?.let {
+                    playerViewModel.setNavController(Navigation.findNavController(it))
+                }
+                AppTheme {
+                    val uiState by playerViewModel.uiState.collectAsState()
+                    PlayerScreen(
+                        uiState = uiState,
+                        onPlayPauseClick = {playerViewModel.playPauseOnClick(requireContext())},
+                        onNextClick = {playerViewModel.onNextClick(requireContext())},
+                        onPreviousClick = {playerViewModel.onPreviousClick(requireContext())},
+                        navigationToSettings = {playerViewModel.navigationToSettings()},
+                        navigationToBack = {playerViewModel.navigationToBack()}
+                    )
+                }
+            }
+        }
+
+        /*
         homeViewModel = ViewModelProvider(this)[HomeViewModel::class.java]
         playlist = homeViewModel.getSongsList()
+
 
         initializeVariables()
         checkDestroyMediaPlayer()
         checkMediaPlayer()
-        player(playlist[currentPosition].audio)
+        player(playlist[currentPosition].audio)*/
 
         return binding.root
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        playerViewModel.destroy()
+    }
+    /*
     private fun initializeVariables() {
         playPauseButton = binding.playPauseButton
         nextButton = binding.nextButton
@@ -264,5 +293,5 @@ class PlayerFragment : Fragment() {
                 }
             }
         }, 0)
-    }
+    }*/
 }
