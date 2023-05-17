@@ -5,39 +5,17 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.Toast
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.ui.platform.ComposeView
+import androidx.compose.runtime.*
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.Navigation
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import com.example.musicpie2.R
 import com.example.musicpie2.databinding.FragmentHomeBinding
-import com.example.musicpie2.model.MediaPlayerSingleton
-import com.example.musicpie2.model.Song
-import com.example.musicpie2.view.adapter.OnItemListClickListener
-import com.example.musicpie2.view.adapter.SongAdapter
 import com.example.musicpie2.view.ui.theme.AppTheme
 import com.example.musicpie2.viewmodel.HomeViewModel
 
-class HomeFragment : Fragment() /*, OnItemListClickListener */{
+class HomeFragment : Fragment() {
 
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
-
-    private lateinit var playlist: ArrayList<Song>
-    private lateinit var playListRecycler: RecyclerView
-    private lateinit var settingsButton: Button
-    private lateinit var playPauseButton: Button
-    private lateinit var randomButton: Button
-    private var isRandom: Boolean = false
-    private var isPlaying: Boolean = false
-    private var destroyMediaplayer: Boolean = false
-    private val baseSongIndex = 0
-    private var currentPosition = baseSongIndex
-    private var mediaPlayerSingleton = MediaPlayerSingleton
 
     private lateinit var homeViewModel: HomeViewModel
 
@@ -45,14 +23,28 @@ class HomeFragment : Fragment() /*, OnItemListClickListener */{
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        homeViewModel = ViewModelProvider(this)[HomeViewModel::class.java]
+
+        arguments?.let { homeViewModel.setArguments(it) }
+        homeViewModel.initializeVariables()
 
         _binding = FragmentHomeBinding.inflate(inflater, container, false).apply {
             composeView.setContent {
                 AppTheme {
-                    HomeScreen()
+                    _binding?.root?.let {
+                        homeViewModel.setNavController(Navigation.findNavController(it))
+                    }
+                    val uiState by homeViewModel.uiState.collectAsState()
+                    HomeScreen(
+                        uiState = uiState,
+                        onSettingsClick = { homeViewModel.navigationToSettings() },
+                        onPlayPauseClick = { homeViewModel.playPauseOnClick() },
+                        onRandomClick = { homeViewModel.randomOnClick() }
+                    )
                 }
             }
         }
+
         /*
         initializeVariables()
 
@@ -66,6 +58,7 @@ class HomeFragment : Fragment() /*, OnItemListClickListener */{
 
         return binding.root
     }
+
     /*
     private fun initializeVariables() {
         playListRecycler = binding.playListRecycler
@@ -108,6 +101,7 @@ class HomeFragment : Fragment() /*, OnItemListClickListener */{
     }
 
     private fun playPauseOnClick() {
+
         playPauseButton.setOnClickListener { view: View ->
             isPlaying = if (isPlaying) {
                 Toast.makeText(requireContext(), "Pause", Toast.LENGTH_SHORT).show()
@@ -124,6 +118,7 @@ class HomeFragment : Fragment() /*, OnItemListClickListener */{
     }
 
     private fun randomOnClick() {
+
         randomButton.setOnClickListener {
             isRandom = if (isRandom) {
                 currentPosition = 0
@@ -140,6 +135,7 @@ class HomeFragment : Fragment() /*, OnItemListClickListener */{
             destroyMediaplayer = true
         }
     }
+
 
     private fun navigationToPlayer(view: View) {
         val bundle = Bundle()
@@ -158,11 +154,11 @@ class HomeFragment : Fragment() /*, OnItemListClickListener */{
             Navigation.findNavController(view)
                 .navigate(R.id.action_homeFragment_to_settingsFragment)
         }
+        Toast.makeText(requireContext(), "Random Click", Toast.LENGTH_SHORT).show()
     }
 
     override fun onItemClick(item: Song, position: Int) {
         Toast.makeText(requireContext(), item.songTitle, Toast.LENGTH_LONG).show()
     }
-
      */
 }
