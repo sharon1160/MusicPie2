@@ -13,6 +13,10 @@ object PlaylistSingleton {
         playlist.removeAt(position)
     }
 
+    fun updatePlaylist(updatedPlaylist: ArrayList<Song>) {
+        playlist = updatedPlaylist
+    }
+
     fun getSize(): Int {
         return playlist.size
     }
