@@ -19,7 +19,6 @@ import com.example.musicpie2.view.ui.home.DefaultIconButton
 import com.example.musicpie2.view.ui.theme.NotoSerif
 
 private val playlistSingleton = PlaylistSingleton
-private val playlist = playlistSingleton.playlist
 
 @Composable
 fun PlayerScreen(
@@ -87,7 +86,7 @@ fun PlayerContent(
             horizontalArrangement = Arrangement.Center,
         ) {
             Image(
-                painter = rememberAsyncImagePainter(model = playlist[uiState.currentPosition].cover),
+                painter = rememberAsyncImagePainter(model = playlistSingleton.playlist[uiState.currentPosition].cover),
                 contentDescription = null,
                 modifier = Modifier.height(260.dp).width(260.dp)
             )
@@ -96,13 +95,13 @@ fun PlayerContent(
             modifier = Modifier.padding(start = 15.dp, end = 15.dp)
         ) {
             Text(
-                text = playlist[uiState.currentPosition].songTitle,
+                text = playlistSingleton.playlist[uiState.currentPosition].songTitle,
                 style = MaterialTheme.typography.bodyLarge,
                 fontFamily = NotoSerif,
                 fontWeight = FontWeight.Bold,
             )
             Text(
-                text = playlist[uiState.currentPosition].songArtist,
+                text = playlistSingleton.playlist[uiState.currentPosition].songArtist,
                 style = MaterialTheme.typography.bodyMedium,
                 fontFamily = NotoSerif,
                 fontWeight = FontWeight.Light
@@ -183,7 +182,6 @@ private fun PlayPauseButton(isPlaying: Boolean, onClick: () -> Unit) {
 @Composable
 fun SeekBar() {
     var progress = 0f
-    //val progress = remember { mutableStateOf(0f) }
 
     Column(
         modifier = Modifier.padding(16.dp),
