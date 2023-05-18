@@ -64,43 +64,6 @@ class SettingsViewModel : ViewModel() {
         allPlaylist = result
     }
 
-    fun getAllSongsList(): ArrayList<Song> {
-        return allPlaylist
-    }
-
-    fun removeSong(song: Song, position: Int) {
-        playlistSingleton.removeSong(position)
-        updateAllSongsListAfterDelete(song, position)
-    }
-
-    fun addSong(song: Song, position: Int, lastPositionTrue: Int) {
-        playlistSingleton.addSong(song)
-        updateAllSongsListAfterAdd(song, position, lastPositionTrue)
-    }
-
-    private fun updateAllSongsListAfterDelete(song: Song, position: Int) {
-        song.inPlaylist = false
-        allPlaylist.removeAt(position)
-        allPlaylist.add(song)
-    }
-
-    private fun updateAllSongsListAfterAdd(song: Song, position: Int, lastPositionTrue: Int) {
-        song.inPlaylist = true
-        allPlaylist.removeAt(position)
-        allPlaylist.add(lastPositionTrue + 1, song)
-    }
-
-    fun getLastTruePosition(): Int {
-        var lastSongIndex = allPlaylist.asReversed().indexOfFirst { it.inPlaylist == true }
-        lastSongIndex = allPlaylist.size - lastSongIndex - 1
-        return lastSongIndex
-    }
-
-    fun getAllSongsListSize(): Int {
-        return allPlaylist.size
-    }
-
-
     fun onActionClick(songTitle: String) {
         destroy()
         val songList = _uiState.value.songsList
