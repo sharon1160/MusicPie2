@@ -85,9 +85,6 @@ class PlayerViewModel : ViewModel() {
         } else {
             mediaPlayerSingleton.pause()
         }
-        //loadCover(playlist[currentPosition].cover, cover)
-        //songTitle.text = playlist[currentPosition].songTitle
-        //songArtist.text = playlist[currentPosition].songArtist
     }
 
 
@@ -126,9 +123,6 @@ class PlayerViewModel : ViewModel() {
         mediaPlayerSingleton.mediaPlayer?.start()
         sendToastBroadcast("Playing \"${playlist[currentPosition].songTitle}\"",context)
         isPlaying = true
-        //loadCover(playlist[currentPosition].cover, cover)
-        //songTitle.text = playlist[currentPosition].songTitle
-        //songArtist.text = playlist[currentPosition].songArtist
 
         _uiState.update {
             it.copy(isPlaying = isPlaying, currentPosition = currentPosition)
@@ -148,9 +142,6 @@ class PlayerViewModel : ViewModel() {
             MediaPlayer.create(context, playlist[currentPosition].audio)
         mediaPlayerSingleton.mediaPlayer?.start()
         isPlaying = true
-        //loadCover(playlist[currentPosition].cover, cover)
-        //songTitle.text = playlist[currentPosition].songTitle
-        //songArtist.text = playlist[currentPosition].songArtist
 
         _uiState.update {
             it.copy(isPlaying = isPlaying, currentPosition = currentPosition)
