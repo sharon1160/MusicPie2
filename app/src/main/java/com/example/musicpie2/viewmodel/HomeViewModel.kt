@@ -2,7 +2,6 @@ package com.example.musicpie2.viewmodel
 
 import android.content.ContentResolver
 import android.os.Bundle
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
@@ -78,7 +77,6 @@ class HomeViewModel : ViewModel() {
 
     fun playPauseOnClick() {
         isPlaying = _uiState.value.isPlaying
-        Log.e("homeViewModel","isPlaying $isPlaying")
         isPlaying = !isPlaying
         isRandom = false
 
@@ -100,7 +98,6 @@ class HomeViewModel : ViewModel() {
 
     fun randomOnClick() {
         isRandom = _uiState.value.isRandom
-        Log.e("homeViewModel","isRandom $isRandom")
 
         isRandom = if (isRandom) {
             currentPosition = 0
@@ -118,7 +115,6 @@ class HomeViewModel : ViewModel() {
     }
 
     fun navigationToSettings() {
-        Log.e("homeViewModel","Settings")
 
         mediaPlayerSingleton.pause()
         isPlaying = false
