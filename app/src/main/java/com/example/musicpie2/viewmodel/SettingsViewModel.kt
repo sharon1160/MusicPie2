@@ -81,9 +81,12 @@ class SettingsViewModel : ViewModel() {
     }
 
     fun onBackClick() {
-        val bundle = Bundle()
         val updatedPlaylist: List<Song> = _uiState.value.songsList.filter { it.inPlaylist }
-        bundle.putParcelableArrayList("updatedPlaylist", ArrayList(updatedPlaylist))
+        playlistSingleton.updatePlaylist(ArrayList(updatedPlaylist))
+
+        val bundle = Bundle()
+        allPlaylist = allPlaylist.filter { it.inPlaylist } as ArrayList<Song>
+        bundle.putParcelableArrayList("initialPlaylist",allPlaylist)
         navController?.navigate(R.id.action_settingsFragment_to_homeFragment, bundle)
     }
 

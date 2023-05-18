@@ -19,7 +19,7 @@ import kotlinx.coroutines.launch
 
 class HomeViewModel : ViewModel() {
     private lateinit var playlist: ArrayList<Song>
-    private lateinit var updatedPlaylist: ArrayList<Song>
+    private lateinit var initialPlaylist: ArrayList<Song>
     private var isRandom: Boolean = false
     private var isPlaying: Boolean = false
     private var destroyMediaPlayer: Boolean = false
@@ -67,9 +67,9 @@ class HomeViewModel : ViewModel() {
     fun initializeVariables() {
         playlist = getSongsList()
         isPlaying = arguments?.getBoolean("isPlaying") ?: false
-        updatedPlaylist = arguments?.getParcelableArrayList("updatedPlaylist") ?: playlist
         currentPosition = arguments?.getInt("currentPosition") ?: baseSongIndex
         destroyMediaPlayer = arguments?.getBoolean("destroyMediaPlayer") ?: false
+        initialPlaylist = arguments?.getParcelableArrayList("initialPlaylist") ?: playlist
         _uiState.update {
             it.copy(isPlaying = isPlaying)
         }
@@ -131,7 +131,8 @@ class HomeViewModel : ViewModel() {
                 it.copy(isRefreshing = true)
             }
             delay(2000)
-            playlistSingleton.updatePlaylist(updatedPlaylist)
+            playlist = initialPlaylist
+            playlistSingleton.updatePlaylist(initialPlaylist)
             _uiState.update {
                 it.copy(isRefreshing = false)
             }
