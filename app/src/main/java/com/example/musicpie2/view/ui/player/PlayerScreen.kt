@@ -16,7 +16,6 @@ import coil.compose.rememberAsyncImagePainter
 import com.example.musicpie2.R
 import com.example.musicpie2.model.PlaylistSingleton
 import com.example.musicpie2.view.ui.home.DefaultIconButton
-import com.example.musicpie2.view.ui.player.PlayerUiState
 import com.example.musicpie2.view.ui.theme.NotoSerif
 
 private val playlistSingleton = PlaylistSingleton

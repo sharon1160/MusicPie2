@@ -1,15 +1,10 @@
 package com.example.musicpie2.view.ui.settings
 
 import android.net.Uri
-import android.util.Log
-import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -18,7 +13,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -29,7 +23,6 @@ import com.example.musicpie2.model.Song
 import com.example.musicpie2.model.SongFileContentProvider
 import com.example.musicpie2.view.ui.home.DefaultIconButton
 import com.example.musicpie2.view.ui.theme.NotoSerif
-import com.example.musicpie2.viewmodel.SettingsViewModel
 
 @Composable
 fun SettingsScreen(onActionClick: (String) -> Unit, onBackClick: () -> Unit, allSongsList: List<Song>) {
