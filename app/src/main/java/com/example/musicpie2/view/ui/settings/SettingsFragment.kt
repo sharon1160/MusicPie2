@@ -1,24 +1,24 @@
-package com.example.musicpie2.view.ui
+package com.example.musicpie2.view.ui.settings
 
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.navigation.Navigation
 import androidx.recyclerview.widget.RecyclerView
 import com.example.musicpie2.databinding.FragmentSettingsBinding
 import com.example.musicpie2.model.MediaPlayerSingleton
-import com.example.musicpie2.model.Song
-import com.example.musicpie2.view.adapter.AddSongClickListener
-import com.example.musicpie2.view.adapter.DeleteSongClickListener
 import com.example.musicpie2.view.adapter.SettingsAdapter
+import com.example.musicpie2.view.ui.theme.AppTheme
 import com.example.musicpie2.viewmodel.SettingsViewModel
 
 
-class SettingsFragment : Fragment(), DeleteSongClickListener, AddSongClickListener {
+class SettingsFragment : Fragment() /*, DeleteSongClickListener, AddSongClickListener */ {
+
 
     private var _binding: FragmentSettingsBinding? = null
     private val binding get() = _binding!!
@@ -32,8 +32,26 @@ class SettingsFragment : Fragment(), DeleteSongClickListener, AddSongClickListen
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        _binding = FragmentSettingsBinding.inflate(inflater, container, false)
+        settingsViewModel = ViewModelProvider(this)[SettingsViewModel::class.java]
+        settingsViewModel.loadAllSongsList(requireActivity().contentResolver)
 
+        _binding = FragmentSettingsBinding.inflate(inflater, container, false).apply {
+            composeView.setContent {
+                AppTheme {
+                    _binding?.root?.let {
+                        settingsViewModel.setNavController(Navigation.findNavController(it))
+                    }
+                    val uiState by settingsViewModel.uiState.collectAsState()
+                    SettingsScreen(
+                        onActionClick = settingsViewModel::onActionClick,
+                        onBackClick = {settingsViewModel.onBackClick()},
+                        allSongsList = uiState.songsList
+                    )
+                }
+            }
+        }
+
+        /*
         settingsViewModel = ViewModelProvider(this)[SettingsViewModel::class.java]
         settingsViewModel.loadAllSongsList(requireActivity().contentResolver)
 
@@ -41,11 +59,11 @@ class SettingsFragment : Fragment(), DeleteSongClickListener, AddSongClickListen
         songAdapter = SettingsAdapter(settingsViewModel.getAllSongsList(), this, this)
 
         settingsRecycler.layoutManager = LinearLayoutManager(requireContext())
-        settingsRecycler.adapter = songAdapter
+        settingsRecycler.adapter = songAdapter*/
 
         return binding.root
     }
-
+    /*
     override fun onDeleteSongClick(item: Song, position: Int) {
         onDestroy()
         settingsViewModel.removeSong(item, position)
@@ -70,5 +88,5 @@ class SettingsFragment : Fragment(), DeleteSongClickListener, AddSongClickListen
         super.onDestroy()
         mediaPlayerSingleton.mediaPlayer?.stop()
         mediaPlayerSingleton.release()
-    }
+    }*/
 }
