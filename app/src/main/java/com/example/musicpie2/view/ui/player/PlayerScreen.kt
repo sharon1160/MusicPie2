@@ -1,6 +1,5 @@
-package com.example.musicpie2.view.ui
+package com.example.musicpie2.view.ui.player
 
-import android.media.MediaPlayer
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
@@ -8,21 +7,16 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.painter.Painter
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.core.content.ContentProviderCompat
-import coil.compose.AsyncImagePainter.State.Empty.painter
 import coil.compose.rememberAsyncImagePainter
 import com.example.musicpie2.R
-import com.example.musicpie2.model.MediaPlayerSingleton
 import com.example.musicpie2.model.PlaylistSingleton
+import com.example.musicpie2.view.ui.home.DefaultIconButton
+import com.example.musicpie2.view.ui.player.PlayerUiState
 import com.example.musicpie2.view.ui.theme.NotoSerif
 
 private val playlistSingleton = PlaylistSingleton
@@ -68,7 +62,7 @@ fun PlayerContent(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(top = 30.dp, bottom = 30.dp, end = 15.dp, start = 15.dp),
+            .padding(top = 0.dp, bottom = 30.dp, end = 15.dp, start = 15.dp),
         verticalArrangement = Arrangement.SpaceAround
     ) {
         Row(
@@ -96,6 +90,7 @@ fun PlayerContent(
             Image(
                 painter = rememberAsyncImagePainter(model = playlist[uiState.currentPosition].cover),
                 contentDescription = null,
+                modifier = Modifier.height(260.dp).width(260.dp)
             )
         }
         Column(
@@ -103,13 +98,13 @@ fun PlayerContent(
         ) {
             Text(
                 text = playlist[uiState.currentPosition].songTitle,
-                style = MaterialTheme.typography.bodyMedium,
+                style = MaterialTheme.typography.bodyLarge,
                 fontFamily = NotoSerif,
                 fontWeight = FontWeight.Bold,
             )
             Text(
                 text = playlist[uiState.currentPosition].songArtist,
-                style = MaterialTheme.typography.bodySmall,
+                style = MaterialTheme.typography.bodyMedium,
                 fontFamily = NotoSerif,
                 fontWeight = FontWeight.Light
             )
@@ -138,8 +133,8 @@ fun PreviousButton(onClick: () -> Unit) {
             contentDescription = "Previous Icon",
             tint = MaterialTheme.colorScheme.primary,
             modifier = Modifier
-                .width(150.dp)
-                .height(150.dp)
+                .width(350.dp)
+                .height(350.dp)
         )
     }
 }
@@ -154,8 +149,8 @@ fun NextButton(onClick: () -> Unit) {
             contentDescription = "Next Icon",
             tint = MaterialTheme.colorScheme.primary,
             modifier = Modifier
-                .width(150.dp)
-                .height(150.dp)
+                .width(350.dp)
+                .height(350.dp)
         )
     }
 }
@@ -179,8 +174,8 @@ private fun PlayPauseButton(isPlaying: Boolean, onClick: () -> Unit) {
             contentDescription = "Play/Pause Icon",
             tint = MaterialTheme.colorScheme.primary,
             modifier = Modifier
-                .width(150.dp)
-                .height(150.dp)
+                .width(350.dp)
+                .height(350.dp)
         )
     }
 }
@@ -211,6 +206,27 @@ fun SeekBar() {
     }
 }
 
+@Preview
+@Composable
+fun PlayerPreview() {
+    Surface(
+        modifier = Modifier.fillMaxSize(),
+        color = MaterialTheme.colorScheme.background
+    ) {
+        Scaffold(
+            content = {
+                PlayerContent(
+                    uiState = PlayerUiState(),
+                    onPlayPauseClick = {},
+                    onNextClick = {},
+                    onPreviousClick = {},
+                    navigationToSettings = {},
+                    navigationToBack = {}
+                )
+            }
+        )
+    }
+}
 
 
 
