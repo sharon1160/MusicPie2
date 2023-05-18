@@ -1,7 +1,6 @@
 package com.example.musicpie2.view.ui.home
 
 import android.net.Uri
-import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -16,7 +15,6 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import com.example.musicpie2.R
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -25,7 +23,6 @@ import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
 import com.example.musicpie2.model.PlaylistSingleton
 import com.example.musicpie2.model.Song
-import com.example.musicpie2.view.ui.home.HomeUiState
 import com.example.musicpie2.view.ui.theme.NotoSerif
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
@@ -62,7 +59,6 @@ fun HomeScreen(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Toolbar(title: String, onSettingsClick: () -> Unit) {
-    val contextForToast = LocalContext.current.applicationContext
     TopAppBar(
         title = {
             Text(
@@ -142,10 +138,7 @@ fun PlaylistTitle(subtitle: String) {
 
 @Composable
 private fun PlayPauseButton(isPlaying: Boolean, onPlayPauseClick: () -> Unit) {
-    val contextForToast = LocalContext.current.applicationContext
     IconButton(onClick = {
-        val message = if (isPlaying) "Pause" else "Play"
-        Toast.makeText(contextForToast, message, Toast.LENGTH_SHORT).show()
         onPlayPauseClick()
     }) {
         val painter =
@@ -167,10 +160,7 @@ private fun PlayPauseButton(isPlaying: Boolean, onPlayPauseClick: () -> Unit) {
 
 @Composable
 fun RandomButton(isRandom: Boolean, onRandomClick: () -> Unit) {
-    val contextForToast = LocalContext.current.applicationContext
     IconButton(onClick = {
-        val message = if (isRandom) "Random off" else "Random on"
-        Toast.makeText(contextForToast, message, Toast.LENGTH_SHORT).show()
         onRandomClick()
     }) {
         var painter = painterResource(id = R.drawable.random_off_icon)
