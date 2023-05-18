@@ -1,4 +1,4 @@
-package com.example.musicpie2.view.ui
+package com.example.musicpie2.view.ui.player
 
 data class PlayerUiState(
     val isPlaying: Boolean = false,

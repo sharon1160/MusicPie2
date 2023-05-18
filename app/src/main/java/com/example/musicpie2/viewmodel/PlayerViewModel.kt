@@ -4,7 +4,6 @@ import android.content.Context
 import android.content.Intent
 import android.media.MediaPlayer
 import android.os.Bundle
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelStoreOwner
@@ -12,7 +11,7 @@ import androidx.navigation.NavController
 import com.example.musicpie2.R
 import com.example.musicpie2.model.MediaPlayerSingleton
 import com.example.musicpie2.model.Song
-import com.example.musicpie2.view.ui.PlayerUiState
+import com.example.musicpie2.view.ui.player.PlayerUiState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update

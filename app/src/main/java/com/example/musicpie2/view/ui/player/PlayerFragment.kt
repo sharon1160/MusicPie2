@@ -1,7 +1,6 @@
-package com.example.musicpie2.view.ui
+package com.example.musicpie2.view.ui.player
 
 import android.os.Bundle
-import android.os.Looper
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -9,8 +8,6 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.SeekBar
-import android.os.Handler
-import android.util.Log
 import android.widget.TextView
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -19,6 +16,7 @@ import androidx.navigation.Navigation
 import com.example.musicpie2.databinding.FragmentPlayerBinding
 import com.example.musicpie2.model.MediaPlayerSingleton
 import com.example.musicpie2.model.Song
+import com.example.musicpie2.view.ui.player.PlayerScreen
 import com.example.musicpie2.view.ui.theme.AppTheme
 import com.example.musicpie2.viewmodel.PlayerViewModel
 
