@@ -4,19 +4,23 @@ import android.content.ContentResolver
 import android.os.Bundle
 import android.util.Log
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
 import com.example.musicpie2.R
 import com.example.musicpie2.model.MediaPlayerSingleton
 import com.example.musicpie2.model.PlaylistSingleton
 import com.example.musicpie2.model.Song
 import com.example.musicpie2.model.SongFileContentProvider
-import com.example.musicpie2.view.ui.HomeUiState
+import com.example.musicpie2.view.ui.home.HomeUiState
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 
 class HomeViewModel : ViewModel() {
     private lateinit var playlist: ArrayList<Song>
+    private lateinit var updatedPlaylist: ArrayList<Song>
     private var isRandom: Boolean = false
     private var isPlaying: Boolean = false
     private var destroyMediaPlayer: Boolean = false
@@ -61,11 +65,10 @@ class HomeViewModel : ViewModel() {
         playlistSingleton.addSong(song)
     }
 
-
-
     fun initializeVariables() {
         playlist = getSongsList()
         isPlaying = arguments?.getBoolean("isPlaying") ?: false
+        updatedPlaylist = arguments?.getParcelableArrayList("updatedPlaylist") ?: playlist
         currentPosition = arguments?.getInt("currentPosition") ?: baseSongIndex
         destroyMediaPlayer = arguments?.getBoolean("destroyMediaPlayer") ?: false
         _uiState.update {
@@ -124,6 +127,19 @@ class HomeViewModel : ViewModel() {
             it.copy(isPlaying = isPlaying)
         }
         navController?.navigate(R.id.action_homeFragment_to_settingsFragment)
+    }
+
+    fun updateData() {
+        viewModelScope.launch {
+            _uiState.update {
+                it.copy(isRefreshing = true)
+            }
+            delay(2000)
+            playlistSingleton.updatePlaylist(updatedPlaylist)
+            _uiState.update {
+                it.copy(isRefreshing = false)
+            }
+        }
     }
 
 }

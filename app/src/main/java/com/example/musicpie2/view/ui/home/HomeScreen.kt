@@ -1,4 +1,4 @@
-package com.example.musicpie2.view.ui
+package com.example.musicpie2.view.ui.home
 
 import android.net.Uri
 import android.widget.Toast
@@ -20,11 +20,15 @@ import androidx.compose.ui.platform.LocalContext
 import com.example.musicpie2.R
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
 import com.example.musicpie2.model.PlaylistSingleton
 import com.example.musicpie2.model.Song
+import com.example.musicpie2.view.ui.home.HomeUiState
 import com.example.musicpie2.view.ui.theme.NotoSerif
+import com.google.accompanist.swiperefresh.SwipeRefresh
+import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 
 private val playlistSingleton = PlaylistSingleton
 
@@ -33,7 +37,8 @@ fun HomeScreen(
     uiState: HomeUiState,
     onSettingsClick: () -> Unit,
     onPlayPauseClick: () -> Unit,
-    onRandomClick: () -> Unit
+    onRandomClick: () -> Unit,
+    updateData: () -> Unit
 ) {
     Surface(
         modifier = Modifier.fillMaxSize(),
@@ -46,7 +51,8 @@ fun HomeScreen(
                     uiState = uiState,
                     subtitle = "Playlist",
                     onPlayPauseClick = onPlayPauseClick,
-                    onRandomClick = onRandomClick
+                    onRandomClick = onRandomClick,
+                    updateData = updateData
                 )
             }
         )
@@ -77,8 +83,6 @@ fun Toolbar(title: String, onSettingsClick: () -> Unit) {
                 tint = MaterialTheme.colorScheme.onPrimary
             ) {
                 onSettingsClick()
-                Toast.makeText(contextForToast, "Settings Click", Toast.LENGTH_SHORT)
-                    .show()
             }
         }
     )
@@ -105,7 +109,8 @@ private fun Content(
     uiState: HomeUiState,
     subtitle: String,
     onPlayPauseClick: () -> Unit,
-    onRandomClick: () -> Unit
+    onRandomClick: () -> Unit,
+    updateData: () -> Unit
 ) {
     Column(
         modifier = Modifier.padding(top = 80.dp, start = 15.dp, end = 15.dp),
@@ -119,7 +124,7 @@ private fun Content(
             PlayPauseButton(isPlaying = uiState.isPlaying, onPlayPauseClick = onPlayPauseClick)
             RandomButton(isRandom = uiState.isRandom, onRandomClick = onRandomClick)
         }
-        SongsListRecycler(playlistSingleton.playlist)
+        SongsListRecycler(playlistSingleton.playlist, uiState.isRefreshing, updateData)
     }
 }
 
@@ -139,7 +144,7 @@ fun PlaylistTitle(subtitle: String) {
 private fun PlayPauseButton(isPlaying: Boolean, onPlayPauseClick: () -> Unit) {
     val contextForToast = LocalContext.current.applicationContext
     IconButton(onClick = {
-        val message = if(isPlaying) "Pause" else "Play"
+        val message = if (isPlaying) "Pause" else "Play"
         Toast.makeText(contextForToast, message, Toast.LENGTH_SHORT).show()
         onPlayPauseClick()
     }) {
@@ -164,7 +169,7 @@ private fun PlayPauseButton(isPlaying: Boolean, onPlayPauseClick: () -> Unit) {
 fun RandomButton(isRandom: Boolean, onRandomClick: () -> Unit) {
     val contextForToast = LocalContext.current.applicationContext
     IconButton(onClick = {
-        val message = if(isRandom) "Random off" else "Random on"
+        val message = if (isRandom) "Random off" else "Random on"
         Toast.makeText(contextForToast, message, Toast.LENGTH_SHORT).show()
         onRandomClick()
     }) {
@@ -190,10 +195,17 @@ fun RandomButton(isRandom: Boolean, onRandomClick: () -> Unit) {
 }
 
 @Composable
-fun SongsListRecycler(songsList: ArrayList<Song> = arrayListOf()) {
-    LazyColumn(modifier = Modifier.padding(vertical = 4.dp)) {
-        items(items = songsList) { song ->
-            ListItem(cover = song.cover, songTitle = song.songTitle, artist = song.songArtist)
+fun SongsListRecycler(
+    songsList: ArrayList<Song> = arrayListOf(),
+    isRefreshing: Boolean,
+    updateData: () -> Unit
+) {
+    val swipeRefreshState = rememberSwipeRefreshState(isRefreshing = isRefreshing)
+    SwipeRefresh(state = swipeRefreshState, onRefresh = { updateData() }) {
+        LazyColumn(modifier = Modifier.padding(vertical = 4.dp)) {
+            items(items = songsList) { song ->
+                ListItem(cover = song.cover, songTitle = song.songTitle, artist = song.songArtist)
+            }
         }
     }
 }
@@ -252,5 +264,27 @@ fun ListItem(cover: Uri, songTitle: String, artist: String) {
                 }
             }
         }
+    }
+}
+
+@Preview
+@Composable
+fun HomePreview() {
+    Surface(
+        modifier = Modifier.fillMaxSize(),
+        color = MaterialTheme.colorScheme.background
+    ) {
+        Scaffold(
+            topBar = { Toolbar(title = "Home", onSettingsClick = {} ) },
+            content = {
+                Content(
+                    uiState = HomeUiState(),
+                    subtitle = "Playlist",
+                    onPlayPauseClick = {} ,
+                    onRandomClick = {} ,
+                    updateData = {}
+                )
+            }
+        )
     }
 }

@@ -1,4 +1,4 @@
-package com.example.musicpie2.view.ui
+package com.example.musicpie2.view.ui.home
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -9,6 +9,7 @@ import androidx.compose.runtime.*
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.Navigation
 import com.example.musicpie2.databinding.FragmentHomeBinding
+import com.example.musicpie2.view.ui.home.HomeScreen
 import com.example.musicpie2.view.ui.theme.AppTheme
 import com.example.musicpie2.viewmodel.HomeViewModel
 
@@ -39,7 +40,8 @@ class HomeFragment : Fragment() {
                         uiState = uiState,
                         onSettingsClick = { homeViewModel.navigationToSettings() },
                         onPlayPauseClick = { homeViewModel.playPauseOnClick() },
-                        onRandomClick = { homeViewModel.randomOnClick() }
+                        onRandomClick = { homeViewModel.randomOnClick() },
+                        updateData = {homeViewModel.updateData()}
                     )
                 }
             }
